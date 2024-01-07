@@ -20,17 +20,17 @@
             android:orientation="vertical" >
 
             <Spinner
-                android:id="@+id/spinner2"
+                android:id="@+id/spSerie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <Spinner
-                android:id="@+id/spinner3"
+                android:id="@+id/spModel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/ivModel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:srcCompat="@drawable/bmw_0" />
@@ -40,13 +40,13 @@
                 android:layout_height="match_parent" >
 
                 <RadioButton
-                    android:id="@+id/radioButton"
+                    android:id="@+id/rbManual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="RadioButton" />
 
                 <RadioButton
-                    android:id="@+id/radioButton2"
+                    android:id="@+id/rbAuto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="RadioButton" />
@@ -63,13 +63,13 @@
                 android:layout_height="match_parent" >
 
                 <RadioButton
-                    android:id="@+id/radioButton3"
+                    android:id="@+id/rbGasoline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="RadioButton" />
 
                 <RadioButton
-                    android:id="@+id/radioButton4"
+                    android:id="@+id/rbDiesel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="RadioButton" />
@@ -82,19 +82,19 @@
                 android:background="@color/black" />
 
             <CheckBox
-                android:id="@+id/checkBox"
+                android:id="@+id/cbPaint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="CheckBox" />
 
             <CheckBox
-                android:id="@+id/checkBox2"
+                android:id="@+id/cbLeather"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="CheckBox" />
 
             <CheckBox
-                android:id="@+id/checkBox3"
+                android:id="@+id/cbNav"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="CheckBox" />
