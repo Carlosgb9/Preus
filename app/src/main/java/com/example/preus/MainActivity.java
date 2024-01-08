@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializer();
         loadInfo();
+        setSpinnerSeries();
     }
 
     private void loadInfo (){
@@ -58,13 +59,14 @@ public class MainActivity extends AppCompatActivity {
             BufferedReader brin =
                     new BufferedReader(new InputStreamReader(fraw));
 
+            series = new ArrayList<>();
+            mapaModel = new HashMap<>();
 
         String line;
         while (!(line = brin.readLine()).equals("end")){
             series.add(line);
         }
-        int reps = (int) series.stream().count();
-        for (int i = 0; i<reps; i++){
+        for (int i = 0; i<(int) series.stream().count(); i++){
             String serie = series.get(i);
             Model model;
             String name;
@@ -95,16 +97,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setSpinners(){
+    private void setSpinnerSeries(){
         ArrayAdapter<String> adapterSeries =
                 new ArrayAdapter<String>(this,
                         android.R.layout.simple_list_item_1, series);
+
         adapterSeries.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
+
         spSerie.setAdapter(adapterSeries);
 
-
         spSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String serie = series.get(i);
+                setSpinerSerie(serie);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void setSpinerSerie(String serie){
+        List<String> nomModel = new ArrayList<>();
+
+        models = mapaModel.get(serie);
+        for (int i = 0; i< (int) models.stream().count();i++){
+            nomModel.add(models.get(i).getName());
+        }
+
+        ArrayAdapter<String> adapterSeries =
+                new ArrayAdapter<String>(this,
+                        android.R.layout.simple_list_item_1, nomModel);
+        adapterSeries.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        spModel.setAdapter(adapterSeries);
+
+        spModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             }
