@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Preus</string>
+    <string name="Manual">Canvi de marxa manual</string>
+    <string name="Automatic">Canvi de marxa automatic</string>
+    <string name="Gasolina">Benzina</string>
+    <string name="Gasoil">Gasoil</string>
+    <string name="Pintura">Pintura metal·lica</string>
+    <string name="Pell">Seients de pell</string>
+    <string name="Navegador">Sistema de navegació</string>
+</resources>

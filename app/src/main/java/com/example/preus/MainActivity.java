@@ -3,7 +3,6 @@ package com.example.preus;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,67 +34,84 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox cbPaint;
     private CheckBox cbLeather;
     private CheckBox cbNav;
-    private List<String> series;
-    private List<Model> models;
-    private Map<String, List<Model>> mapaModel;
-    private int autoPrice;
-    private int dieselPrice;
-    private int paintPrice;
-    private int leatherPrice;
-    private int navPrice;
+    private TextView tvPrice;
+    private Map<String, List<String>> mapaNomModel = new HashMap<String, List<String>>();
+    private Map<String, List<Integer>> mapaPreuModel = new HashMap<String, List<Integer>>();
+    private Map<String, List<String>> mapaImageModel = new HashMap<String, List<String>>();
+    private List<String> series = new ArrayList<>();
+    private List<Integer> extras = new ArrayList<>();
+    private int preuBase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializer();
-        loadInfo();
+        loadSeries();
         setSpinnerSeries();
     }
 
-    private void loadInfo (){
+    private void loadSeries (){
+        InputStream fraw = getResources().openRawResource(R.raw.datos_coches);
 
-        try {
-            InputStream fraw = getResources().openRawResource(R.raw.datos_coches);
-            BufferedReader brin =
-                    new BufferedReader(new InputStreamReader(fraw));
+        try (BufferedReader brin = new BufferedReader(new InputStreamReader(fraw))) {
+            String line = brin.readLine();
 
-            series = new ArrayList<>();
-            mapaModel = new HashMap<>();
-
-        String line;
-        while (!(line = brin.readLine()).equals("end")){
-            series.add(line);
-        }
-        for (int i = 0; i<(int) series.stream().count(); i++){
-            String serie = series.get(i);
-            Model model;
-            String name;
-            String image;
-            int preu;
-            while (!(line = brin.readLine()).equals("end")){
-                name = line;
+            while (line != null) { // reads and saves BMW series' cars.
+                while (!line.equals("end")) {
+                    series.add(line);
+                    line = brin.readLine();
+                }
                 line = brin.readLine();
-                preu = Integer.parseInt(line);
-                line = brin.readLine();
-                image = line;
 
-                model = new Model(name, preu, image);
+                line = loadModels(line, brin); // reads and saves each car data.
 
-                models.add(model);
+                while (line != null) { // reads and saves the extras' prices.
+                    extras.add(Integer.valueOf(line));
+                    line = brin.readLine();
+                }
             }
-            mapaModel.put(serie, models);
-        }
-        autoPrice = (Integer.parseInt(brin.readLine()));
-        dieselPrice = (Integer.parseInt(brin.readLine()));
-        paintPrice = (Integer.parseInt(brin.readLine()));
-        leatherPrice = (Integer.parseInt(brin.readLine()));
-        navPrice = (Integer.parseInt(brin.readLine()));
 
-        fraw.close();
-        } catch (Exception ex) {
-            Log.e("Fitxers", " Error en llegir fitxer des de recurs raw");
+        } catch (IOException e) {
+            // Error occurred when opening raw file for reading.
         }
+    }
+
+    private String loadModels (String line, BufferedReader brin) throws IOException {
+        int i = 0;
+        int pos = 0;
+
+        for (String seriesName : series) {
+            List<String> modelNames = new ArrayList<>();
+            List<Integer> modelPrice = new ArrayList<>();
+            List<String> modelImage = new ArrayList<>();
+
+            while (!line.equals("end")) { // Loops through each series data.
+                switch (pos) {
+                    case 0: {
+                        modelNames.add(line);
+                        break;
+                    }
+                    case 1: {
+                        modelPrice.add(Integer.valueOf(line));
+                        break;
+                    }
+                    case 2: {
+                        modelImage.add(line);
+                        break;
+                    }
+                }
+                line = brin.readLine();
+                i += 1;
+                pos = i % 3;
+            }
+            mapaNomModel.put(seriesName, modelNames);
+            mapaPreuModel.put(seriesName, modelPrice);
+            mapaImageModel.put(seriesName, modelImage);
+            line = brin.readLine();
+        }
+        return line;
     }
 
     private void setSpinnerSeries(){
@@ -110,8 +127,7 @@ public class MainActivity extends AppCompatActivity {
         spSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String serie = series.get(i);
-                setSpinerSerie(serie);
+                setSpinerSerie(adapterView, i);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -119,17 +135,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setSpinerSerie(String serie){
-        List<String> nomModel = new ArrayList<>();
-
-        models = mapaModel.get(serie);
-        for (int i = 0; i< (int) models.stream().count();i++){
-            nomModel.add(models.get(i).getName());
-        }
+    private void setSpinerSerie(AdapterView<?> adapterView, int i){
+        String selectedSerie = adapterView.getItemAtPosition(i).toString();
 
         ArrayAdapter<String> adapterSeries =
                 new ArrayAdapter<String>(this,
-                        android.R.layout.simple_list_item_1, nomModel);
+                        android.R.layout.simple_list_item_1, mapaNomModel.get(selectedSerie));
         adapterSeries.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
         spModel.setAdapter(adapterSeries);
@@ -137,11 +148,58 @@ public class MainActivity extends AppCompatActivity {
         spModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                getModelPrice(i, selectedSerie);
+                getModelImage(i, selectedSerie);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+    }
+
+    private void getModelPrice(int i, String selectedSerie){
+        List<Integer> priceList = mapaPreuModel.get(selectedSerie);
+        int selectedPrice = (int) priceList.get(i);
+
+        String formattedPrice = formatPrice(selectedPrice);
+
+        preuBase = selectedPrice;
+        tvPrice.setText(formattedPrice);
+
+        cbPaint.setChecked(false);
+        cbLeather.setChecked(false);
+        cbNav.setChecked(false);
+        rbManual.setChecked(true);
+        rbGasoline.setChecked(true);
+    }
+
+    private void getModelImage(int i, String selectedSerie){
+        List<String> imageList = mapaImageModel.get(selectedSerie);
+        String selectedImage = (String) imageList.get(i);
+
+        int imageResource = getResources().getIdentifier(selectedImage, "drawable", getPackageName());
+        ivModel.setImageResource(imageResource);
+    }
+
+    private String formatPrice(int price) {
+        String format = "##,### €";
+        DecimalFormat df = new DecimalFormat(format);
+        String formattedPrice = df.format(price);
+
+        return formattedPrice;
+    }
+
+    public void setPriceOnClick(View view){
+        int preuFinal = preuBase;
+
+        if (rbAuto.isChecked()) {preuFinal = preuFinal + extras.get(0);}
+        if (rbDiesel.isChecked()) {preuFinal = preuFinal + extras.get(1);}
+        if (cbPaint.isChecked()) {preuFinal = preuFinal + extras.get(2);}
+        if (cbLeather.isChecked()) {preuFinal = preuFinal + extras.get(3);}
+        if (cbNav.isChecked()) {preuFinal = preuFinal + extras.get(4);}
+
+        String textPreu = formatPrice(preuFinal);
+        tvPrice.setText(textPreu);
     }
 
     private void initializer(){
@@ -155,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         cbPaint = findViewById(R.id.cbPaint);
         cbLeather = findViewById(R.id.cbLeather);
         cbNav = findViewById(R.id.cbNav);
+        tvPrice = findViewById(R.id.tvPrice);
     }
 
 }

@@ -43,13 +43,15 @@
                     android:id="@+id/rbManual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RadioButton" />
+                    android:onClick="setPriceOnClick"
+                    android:text="@string/Manual" />
 
                 <RadioButton
                     android:id="@+id/rbAuto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RadioButton" />
+                    android:onClick="setPriceOnClick"
+                    android:text="@string/Automatic" />
             </RadioGroup>
 
             <View
@@ -66,13 +68,15 @@
                     android:id="@+id/rbGasoline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RadioButton" />
+                    android:onClick="setPriceOnClick"
+                    android:text="@string/Gasolina" />
 
                 <RadioButton
                     android:id="@+id/rbDiesel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RadioButton" />
+                    android:onClick="setPriceOnClick"
+                    android:text="@string/Gasoil" />
             </RadioGroup>
 
             <View
@@ -85,19 +89,27 @@
                 android:id="@+id/cbPaint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CheckBox" />
+                android:onClick="setPriceOnClick"
+                android:text="@string/Pintura" />
 
             <CheckBox
                 android:id="@+id/cbLeather"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CheckBox" />
+                android:onClick="setPriceOnClick"
+                android:text="@string/Pell" />
 
             <CheckBox
                 android:id="@+id/cbNav"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CheckBox" />
+                android:onClick="setPriceOnClick"
+                android:text="@string/Pintura" />
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
