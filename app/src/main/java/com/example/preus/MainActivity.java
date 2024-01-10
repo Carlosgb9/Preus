@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
         setSpinnerSeries();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
     private void loadSeries (){
         InputStream fraw = getResources().openRawResource(R.raw.datos_coches);
 
