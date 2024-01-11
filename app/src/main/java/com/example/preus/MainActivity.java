@@ -1,6 +1,7 @@
 package com.example.preus;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox cbLeather;
     private CheckBox cbNav;
     private TextView tvPrice;
+    private Toolbar bmwToolbar;
     private Map<String, List<String>> mapaNomModel = new HashMap<String, List<String>>();
     private Map<String, List<Integer>> mapaPreuModel = new HashMap<String, List<Integer>>();
     private Map<String, List<String>> mapaImageModel = new HashMap<String, List<String>>();
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         initializer();
         loadSeries();
         setSpinnerSeries();
+        Toolbar bmwToolbar = findViewById(R.id.bmwToolbar);
+        bmwToolbar.setTitle("BMW Configurator");
+        setSupportActionBar(bmwToolbar);
     }
 
     @Override
