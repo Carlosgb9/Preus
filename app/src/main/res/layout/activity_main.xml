@@ -44,6 +44,7 @@
                 tools:srcCompat="@drawable/bmw_0" />
 
             <RadioGroup
+                android:id="@+id/rgGear"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -69,6 +70,7 @@
                 android:background="@color/black" />
 
             <RadioGroup
+                android:id="@+id/rgCombustible"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

@@ -3,20 +3,27 @@ package com.example.preus;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton rbAuto;
     private RadioButton rbGasoline;
     private RadioButton rbDiesel;
+    private RadioGroup rgCombustible;
+    private RadioGroup rgGear;
     private CheckBox cbPaint;
     private CheckBox cbLeather;
     private CheckBox cbNav;
@@ -49,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initializer();
         loadSeries();
         setSpinnerSeries();
+        loadSavedData();
         Toolbar bmwToolbar = findViewById(R.id.bmwToolbar);
         bmwToolbar.setTitle("BMW Configurator");
         setSupportActionBar(bmwToolbar);
@@ -61,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        String data = spSerie.getSelectedItem().toString() + ","
+                + spModel.getSelectedItem().toString() + ","
+                + rgGear.getCheckedRadioButtonId() + ","
+                + rgCombustible.getCheckedRadioButtonId() + ","
+                + cbPaint.isChecked() + ","
+                + cbLeather.isChecked() + ","
+                + cbNav.isChecked();
+
+        saveToFile(data);
     }
 
     private void loadSeries (){
@@ -138,7 +158,10 @@ public class MainActivity extends AppCompatActivity {
         spSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                setSpinerSerie(adapterView, i);
+               /*if (tengoQueCargar) {
+                   setSpinerSerie(adapterView, i);
+               }
+               tengoQueCargar=true;*/
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -176,12 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
         preuBase = selectedPrice;
         tvPrice.setText(formattedPrice);
-
-        cbPaint.setChecked(false);
-        cbLeather.setChecked(false);
-        cbNav.setChecked(false);
-        rbManual.setChecked(true);
-        rbGasoline.setChecked(true);
     }
 
     private void getModelImage(int i, String selectedSerie){
@@ -213,6 +230,57 @@ public class MainActivity extends AppCompatActivity {
         tvPrice.setText(textPreu);
     }
 
+    private void saveToFile(String data) {
+        try {
+            FileOutputStream fos = openFileOutput("config.txt", Context.MODE_PRIVATE);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fos);
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readFromFile() {
+        try {
+            FileInputStream file = openFileInput("config.txt");
+            StringBuilder text = new StringBuilder();
+
+            java.util.Scanner scanner = new java.util.Scanner(file);
+            while (scanner.hasNextLine()) {
+                text.append(scanner.nextLine());
+            }
+            scanner.close();
+            return text.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void loadSavedData(){
+        String data = readFromFile();
+        if (data != null) {
+            String[] values = data.split(",");
+            spSerie.setSelection(getIndex(spSerie, values[0]));
+            spModel.setSelection(getIndex(spModel, values[1]));
+            ((RadioButton) rgGear.findViewById(Integer.parseInt(values[2]))).setChecked(true);
+            ((RadioButton) rgCombustible.findViewById(Integer.parseInt(values[3]))).setChecked(true);
+            cbLeather.setChecked(Boolean.parseBoolean(values[4]));
+            cbPaint.setChecked(Boolean.parseBoolean(values[5]));
+            cbNav.setChecked(Boolean.parseBoolean(values[6]));
+        }
+    }
+
+    private int getIndex(Spinner spinner, String value) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(value)) {
+                return i;
+            }
+        }
+        return 0; // Valor por defecto si no se encuentra
+    }
+
     private void initializer(){
         spSerie = findViewById(R.id.spSerie);
         spModel = findViewById(R.id.spModel);
@@ -221,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
         rbAuto = findViewById(R.id.rbAuto);
         rbGasoline = findViewById(R.id.rbGasoline);
         rbDiesel = findViewById(R.id.rbDiesel);
+        rgCombustible = findViewById(R.id.rgCombustible);
+        rgGear = findViewById(R.id.rgGear);
         cbPaint = findViewById(R.id.cbPaint);
         cbLeather = findViewById(R.id.cbLeather);
         cbNav = findViewById(R.id.cbNav);
