@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 + cbPaint.isChecked() + ","
                 + cbLeather.isChecked() + ","
                 + cbNav.isChecked();
-
         saveToFile(data);
     }
 
@@ -158,10 +157,7 @@ public class MainActivity extends AppCompatActivity {
         spSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-               /*if (tengoQueCargar) {
-                   setSpinerSerie(adapterView, i);
-               }
-               tengoQueCargar=true;*/
+                setSpinerSerie(adapterView, i);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -278,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 return i;
             }
         }
-        return 0; // Valor por defecto si no se encuentra
+        return 0;
     }
 
     private void initializer(){
